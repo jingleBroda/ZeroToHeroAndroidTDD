@@ -7,30 +7,23 @@ import ru.easycode.zerotoheroandroidtdd.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
-    private var textVisibility = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater).apply {
             setContentView(root)
         }
-        textVisibility = savedInstanceState?.getBoolean(VISIBILITY_TEXT_KEY) ?: true
         with(binding) {
-            if(textVisibility) titleTextView.visibility = View.VISIBLE
-            else titleTextView.visibility = View.GONE
-
+            titleTextView.visibility = savedInstanceState?.getInt(VISIBILITY_TEXT_KEY) ?: View.VISIBLE
             hideButton.setOnClickListener(this@MainActivity)
         }
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(VISIBILITY_TEXT_KEY, textVisibility)
+        outState.putInt(VISIBILITY_TEXT_KEY, binding.titleTextView.visibility)
     }
     override fun onClick(v: View) {
         when(v.id) {
-            R.id.hideButton -> {
-                binding.titleTextView.visibility = View.GONE
-                textVisibility = false
-            }
+            R.id.hideButton -> binding.titleTextView.visibility = View.GONE
         }
     }
 
