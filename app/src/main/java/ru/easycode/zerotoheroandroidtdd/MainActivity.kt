@@ -1,40 +1,62 @@
 package ru.easycode.zerotoheroandroidtdd
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ru.easycode.zerotoheroandroidtdd.databinding.ActivityMainBinding
+import java.io.Serializable
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
-    private var deletedFlag = false
+    private var state: State = State.NotRemove
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater).apply {
             setContentView(root)
         }
-        deletedFlag = savedInstanceState?.getBoolean(DELETE_TEXT_VIEW_KEY) ?: false
-        if(deletedFlag) binding.rootLayout.removeView(binding.titleTextView)
+        savedInstanceState?.let {
+            state = if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                savedInstanceState.getSerializable(DELETE_TEXT_VIEW_KEY) as State
+            }
+            else savedInstanceState.getSerializable(DELETE_TEXT_VIEW_KEY, State::class.java) as State
+        }
         with(binding) {
+            state.apply(rootLayout, titleTextView)
             removeButton.setOnClickListener(this@MainActivity)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(DELETE_TEXT_VIEW_KEY, deletedFlag)
+        outState.putSerializable(DELETE_TEXT_VIEW_KEY, state)
     }
 
     override fun onClick(v: View) {
         when(v.id) {
             R.id.removeButton-> {
-                binding.rootLayout.removeView(binding.titleTextView)
-                deletedFlag = true
+                state = State.Remove
+                state.apply(binding.rootLayout, binding.titleTextView)
             }
         }
     }
 
     companion object {
         private const val DELETE_TEXT_VIEW_KEY = "DELETE_TEXT_VIEW_KEY"
+    }
+
+    private interface State: Serializable {
+        fun apply(layout: LinearLayout, textView: TextView)
+
+        object NotRemove: State {
+            override fun apply(layout: LinearLayout, textView: TextView) = Unit
+        }
+
+        object Remove: State {
+            override fun apply(layout: LinearLayout, textView: TextView) =
+                layout.removeView(textView)
+        }
     }
 }
