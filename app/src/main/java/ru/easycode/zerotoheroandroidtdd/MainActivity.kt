@@ -1,11 +1,60 @@
 package ru.easycode.zerotoheroandroidtdd
 
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import ru.easycode.zerotoheroandroidtdd.databinding.ActivityMainBinding
+import ru.easycode.zerotoheroandroidtdd.utils.Count
+import ru.easycode.zerotoheroandroidtdd.utils.UiState
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
+    private lateinit var binding: ActivityMainBinding
+    private val count = Count.Base(2, 4)
+    private var state:UiState = UiState.Base("0")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater).apply {
+            setContentView(root)
+        }
+        savedInstanceState?.let {
+            state = if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                savedInstanceState.getSerializable(SAVE_STATE_KEY) as UiState
+            }
+            else {
+                savedInstanceState.getSerializable(SAVE_STATE_KEY, UiState::class.java) as UiState
+            }
+            state.apply(
+                binding.incrementButton,
+                binding.countTextView
+            )
+        }
+        with(binding) {
+            incrementButton.setOnClickListener(this@MainActivity)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putSerializable(SAVE_STATE_KEY, state)
+    }
+
+    override fun onClick(v: View) {
+        when(v.id) {
+            R.id.incrementButton -> {
+                try {
+                    state =
+                        count.increment(binding.countTextView.text.toString())
+                    state.apply(binding.incrementButton, binding.countTextView)
+                }
+                catch(e:Exception) {
+                    binding.incrementButton.isEnabled = false
+                }
+            }
+        }
+    }
+
+    companion object {
+        private const val SAVE_STATE_KEY = "SAVE_STATE_KEY"
     }
 }
