@@ -42,14 +42,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when(v.id) {
             R.id.incrementButton -> {
-                try {
-                    state =
-                        count.increment(binding.countTextView.text.toString())
-                    state.apply(binding.incrementButton, binding.countTextView)
-                }
-                catch(e:Exception) {
-                    binding.incrementButton.isEnabled = false
-                }
+                state = count.increment(binding.countTextView.text.toString())
+                state.apply(binding.incrementButton, binding.countTextView)
             }
         }
     }

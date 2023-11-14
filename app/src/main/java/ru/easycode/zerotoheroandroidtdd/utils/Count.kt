@@ -14,6 +14,11 @@ interface Count {
             if(step > max) throw IllegalStateException("max should be more than step")
         }
 
+        override fun increment(number: String): UiState =
+            if(number.toInt() + step < max) UiState.Base((number.toInt() + step).toString())
+            else UiState.Max(max.toString())
+
+        /*
         override fun increment(number: String): UiState {
             val result = number.toInt() + step
             if(result > max) throw IllegalStateException("max $max < increment $result")
@@ -28,5 +33,6 @@ interface Count {
                     )
             }
         }
+         */
     }
 }
