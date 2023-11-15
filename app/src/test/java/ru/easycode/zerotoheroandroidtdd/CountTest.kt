@@ -2,6 +2,8 @@ package ru.easycode.zerotoheroandroidtdd
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import ru.easycode.zerotoheroandroidtdd.utils.Count
+import ru.easycode.zerotoheroandroidtdd.utils.UiState
 
 /**
  * Please also check ui test
