@@ -10,6 +10,12 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import ru.easycode.zerotoheroandroidtdd.data.Repository
+import ru.easycode.zerotoheroandroidtdd.domain.SimpleResponse
+import ru.easycode.zerotoheroandroidtdd.presentation.utils.UiState
+import ru.easycode.zerotoheroandroidtdd.presentation.activity.MainViewModel
+import ru.easycode.zerotoheroandroidtdd.presentation.utils.BundleWrapper
+import ru.easycode.zerotoheroandroidtdd.presentation.utils.LiveDataWrapper
 
 /**
  * Please also check out the ui test
@@ -38,40 +44,40 @@ class MainViewModelTest {
     private lateinit var liveDataWrapper: FakeLiveDataWrapper
     private lateinit var viewModel: MainViewModel
 
-    fun initialize() {
-        repository = FakeRepository.Base()
-        liveDataWrapper = FakeLiveDataWrapper.Base()
-        viewModel = MainViewModel(
-            liveDataWrapper = liveDataWrapper,
-            repository = repository
-        )
-    }
+   fun initialize() {
+       repository = FakeRepository.Base()
+       liveDataWrapper = FakeLiveDataWrapper.Base()
+       viewModel = MainViewModel(
+           liveDataWrapper = liveDataWrapper,
+           repository = repository
+       )
+   }
 
     @Test
-    fun test() {
-        repository.expectResponse(SimpleResponse(text = "testingText"))
+   fun test() {
+       repository.expectResponse(SimpleResponse(text = "testingText"))
 
-        viewModel.load()
-        liveDataWrapper.checkUpdateCalls(
-            listOf(
-                UiState.ShowProgress,
-                UiState.ShowData(text = "testingText")
-            )
-        )
-        repository.checkLoadCalledTimes(1)
+       viewModel.load()
+       liveDataWrapper.checkUpdateCalls(
+           listOf(
+               UiState.ShowProgress,
+               UiState.ShowData(text = "testingText")
+           )
+       )
+       repository.checkLoadCalledTimes(1)
 
-        val bundleWrapper: BundleWrapper.Mutable = FakeBundleWrapper.Base()
-        val bundleWrapperSave: BundleWrapper.Save = bundleWrapper
-        val bundleWrapperRestore: BundleWrapper.Restore = bundleWrapper
+       val bundleWrapper: BundleWrapper.Mutable = FakeBundleWrapper.Base()
+       val bundleWrapperSave: BundleWrapper.Save = bundleWrapper
+       val bundleWrapperRestore: BundleWrapper.Restore = bundleWrapper
 
-        viewModel.save(bundleWrapper = bundleWrapperSave)
+       viewModel.save(bundleWrapper = bundleWrapperSave)
 
-        initialize()
+       initialize()
 
-        viewModel.restore(bundleWrapper = bundleWrapperRestore)
-        liveDataWrapper.checkUpdateCalls(listOf(UiState.ShowData(text = "testingText")))
-        repository.checkLoadCalledTimes(0)
-    }
+       viewModel.restore(bundleWrapper = bundleWrapperRestore)
+       liveDataWrapper.checkUpdateCalls(listOf(UiState.ShowData(text = "testingText")))
+       repository.checkLoadCalledTimes(0)
+   }
 }
 
 private interface FakeBundleWrapper : BundleWrapper.Mutable {
