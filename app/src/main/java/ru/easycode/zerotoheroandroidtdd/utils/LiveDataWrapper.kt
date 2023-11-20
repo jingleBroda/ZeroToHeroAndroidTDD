@@ -2,7 +2,6 @@ package ru.easycode.zerotoheroandroidtdd.utils
 
 import androidx.lifecycle.LiveData
 import ru.easycode.zerotoheroandroidtdd.uiState.UiState
-import java.lang.Exception
 
 interface LiveDataWrapper {
     fun save(bundleWrapper: BundleWrapper.Save)
@@ -13,11 +12,8 @@ interface LiveDataWrapper {
         private val liveEvent = SingleLiveEvent<UiState>()
 
         override fun save(bundleWrapper: BundleWrapper.Save) {
-            try {
-                bundleWrapper.save(liveEvent.value!!)
-            }
-            catch(e:Error) {
-                throw Exception(e)
+            liveEvent.value?.let {
+                bundleWrapper.save(it)
             }
         }
 
