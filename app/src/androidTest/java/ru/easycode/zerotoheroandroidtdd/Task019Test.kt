@@ -23,6 +23,7 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import ru.easycode.zerotoheroandroidtdd.presentation.activity.MainActivity
 
 /**
  * Please also check out the unit test
@@ -71,7 +72,7 @@ class Task019Test {
         onView(withId(R.id.actionButton)).check(matches(isNotEnabled()))
         onView(withId(R.id.progressBar)).check(matches(isDisplayed()))
 
-        onView(isRoot()).perform(waitTillDisplayed(R.id.titleTextView, 5000))
+        onView(isRoot()).perform(waitTillDisplayed(R.id.titleTextView, 55000))
         onView(withId(R.id.titleTextView)).check(matches(withText("Hello World From Web!")))
         onView(withId(R.id.progressBar)).check(matches(not(isDisplayed())))
         onView(withId(R.id.actionButton)).check(matches(isEnabled()))

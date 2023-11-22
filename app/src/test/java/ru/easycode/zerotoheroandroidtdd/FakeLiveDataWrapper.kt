@@ -2,6 +2,9 @@ package ru.easycode.zerotoheroandroidtdd
 
 import androidx.lifecycle.LiveData
 import org.junit.Assert.assertEquals
+import ru.easycode.zerotoheroandroidtdd.presentation.utils.BundleWrapper
+import ru.easycode.zerotoheroandroidtdd.presentation.utils.LiveDataWrapper
+import ru.easycode.zerotoheroandroidtdd.presentation.utils.UiState
 
 interface FakeLiveDataWrapper : LiveDataWrapper.Mutable {
 
