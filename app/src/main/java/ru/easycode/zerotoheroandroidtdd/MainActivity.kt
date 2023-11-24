@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             inputEditText.addTextChangedListener(object : CustomTexWatcher {
                 override fun onTextChanged(charSequence: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     println(charSequence)
-                    actionButton.isEnabled = charSequence.toString() == "min"
+                    actionButton.isEnabled = charSequence.toString().length >= 3
                 }
             })
             actionButton.setOnClickListener(this@MainActivity)
