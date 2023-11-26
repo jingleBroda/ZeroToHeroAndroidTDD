@@ -1,27 +1,24 @@
 package ru.easycode.zerotoheroandroidtdd
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import ru.easycode.zerotoheroandroidtdd.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
-    private var list = mutableListOf<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater).apply {
             setContentView(root)
         }
         savedInstanceState?.let {
-            val saveList = if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                (it.getSerializable(SAVE_LIST_KEY) as SaveStringList).saveList
+            val restoreList = it.getStringArrayList(SAVE_LIST_KEY) ?: ArrayList()
+            restoreList.forEach { inputText ->
+                addTextView(inputText)
             }
-            else (it.getSerializable(SAVE_LIST_KEY, SaveStringList::class.java) as SaveStringList).saveList
-            list = saveList.toMutableList()
-            restoreList()
         }
         with(binding) {
             actionButton.setOnClickListener(this@MainActivity)
@@ -30,25 +27,24 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putSerializable(SAVE_LIST_KEY, SaveStringList(list))
+        val textList = binding.contentLayout.children.map {
+            (it as TextView ).text.toString()
+        }.toList()
+        outState.putStringArrayList(SAVE_LIST_KEY, ArrayList(textList))
     }
 
-    private fun restoreList() {
-        for(index in list.indices) {
-            val textView = TextView(this)
-            textView.text = list[index]
-            binding.contentLayout.addView(textView, index)
-        }
+    private fun addTextView(text: String) {
+        val textView = TextView(this)
+        textView.text = text
+        binding.contentLayout.addView(textView)
+        binding.inputEditText.setText("")
     }
 
     override fun onClick(v: View) {
         when(v.id) {
             R.id.actionButton -> {
-                val textView = TextView(this)
-                textView.text = binding.inputEditText.text
-                list.add(textView.text.toString())
-                binding.contentLayout.addView(textView, list.lastIndex)
-                binding.inputEditText.setText("")
+                val inputText = binding.inputEditText.text.toString()
+                addTextView(inputText)
             }
         }
     }
